@@ -22,7 +22,8 @@ public class WarCard extends Card {
     public String toString() {
         return rank + " of " + suit;
     }
-
+    
+    
     public int getRank() {
         return rank;
     }

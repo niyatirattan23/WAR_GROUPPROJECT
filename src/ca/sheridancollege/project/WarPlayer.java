@@ -12,7 +12,7 @@ package ca.sheridancollege.project;
 import java.util.ArrayList;
 
 public class WarPlayer extends Player {
-    private ArrayList<WarCard> hand;
+     private ArrayList<WarCard> hand;
 
     public WarPlayer(String name) {
         super(name);

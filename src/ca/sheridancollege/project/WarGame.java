@@ -9,10 +9,9 @@ package ca.sheridancollege.project;
  * @author niyat
  */
 
-import java.util.ArrayList;
 
 public class WarGame extends Game {
-    private GroupOfCards deck;
+     private GroupOfCards deck;
 
     public WarGame(String name) {
         super(name);
