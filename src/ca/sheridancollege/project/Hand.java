@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author niyat
+ * @author ravjot
  */
 public class Hand extends GroupOfCards {
 
