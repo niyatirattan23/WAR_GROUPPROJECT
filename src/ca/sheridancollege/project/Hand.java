@@ -4,6 +4,8 @@
  */
 package ca.sheridancollege.project;
 
+import java.util.ArrayList;
+
 
 /**
  *
@@ -14,6 +16,15 @@ public class Hand extends GroupOfCards {
     public Hand(int size) {
         super(size); 
     }
+ public void addCard(Card card) {
+        getCards().add(card);
+    }
 
-    // Add methods specific to a hand of cards
+    public Card playCard() {
+        return getCards().remove(0);
+    }
+
+    public void addCards(ArrayList<Card> cards) {
+        getCards().addAll(cards);
+    }
 }

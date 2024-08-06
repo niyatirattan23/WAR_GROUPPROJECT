@@ -12,23 +12,27 @@ package ca.sheridancollege.project;
 import java.util.ArrayList;
 
 public class WarPlayer extends Player {
-     private ArrayList<WarCard> hand;
+     private Hand hand;
 
-    public WarPlayer(String name) {
+public WarPlayer(String name) {
         super(name);
-        hand = new ArrayList<>();
+        hand = new Hand(0); // Hand size will be managed during the game
     }
 
-    public void addCardToHand(WarCard card) {
-        hand.add(card);
+    public Hand getHand() {
+        return hand;
     }
 
-    public WarCard playCard() {
-        return hand.remove(0);
+    public void addCardToHand(Card card) {
+        hand.addCard(card);
+    }
+
+    public Card playCard() {
+        return hand.playCard();
     }
 
     @Override
     public void play() {
-        // War game logic goes here
+        // Specific game logic for playing a turn
     }
 }

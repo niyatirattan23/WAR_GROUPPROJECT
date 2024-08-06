@@ -18,13 +18,16 @@ public class WarCard extends Card {
         this.rank = rank;
     }
 
+    public String getSuit() {
+        return suit;
+    }
+
+    public int getRank() {
+        return rank;
+    }
+
     @Override
     public String toString() {
         return rank + " of " + suit;
-    }
-    
-    
-    public int getRank() {
-        return rank;
     }
 }

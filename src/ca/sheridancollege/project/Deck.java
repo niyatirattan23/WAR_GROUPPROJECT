@@ -12,7 +12,15 @@ public class Deck extends GroupOfCards {
 
     public Deck() {
         super(52); 
+     initializeDeck();
     }
 
-    // Add methods specific to a deck of cards
+    private void initializeDeck() {
+        for (String suit : new String[]{"Hearts", "Diamonds", "Clubs", "Spades"}) {
+            for (int rank = 1; rank <= 13; rank++) {
+                getCards().add(new WarCard(suit, rank));
+            }
+        }
+        shuffle();
+    }
 }

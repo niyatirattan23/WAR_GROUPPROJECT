@@ -12,7 +12,7 @@ import java.util.Scanner;
  */
 public class Main {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+Scanner scanner = new Scanner(System.in);
 
         System.out.println("Welcome to the War card game!");
 
@@ -24,7 +24,11 @@ public class Main {
         String player2Name = scanner.nextLine();
         WarPlayer player2 = new WarPlayer(player2Name);
 
-        WarGame warGame = new WarGame("War");
+        System.out.print("Enter the number of rounds to play (default is 20): ");
+        int numRounds = scanner.nextInt();
+        scanner.nextLine(); // Consume newline left-over
+
+        WarGame warGame = new WarGame("War", numRounds); // Pass numRounds to WarGame constructor
         warGame.addPlayer(player1);
         warGame.addPlayer(player2);
 
