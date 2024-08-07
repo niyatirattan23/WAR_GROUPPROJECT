@@ -5,6 +5,7 @@
 package ca.sheridancollege.project;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -42,12 +43,7 @@ public class WarGame extends Game {
     }
 
     private void initializeGame() {
-        // Create players and distribute cards
-        WarPlayer player1 = new WarPlayer("Player 1");
-        WarPlayer player2 = new WarPlayer("Player 2");
-        warPlayers.add(player1);
-        warPlayers.add(player2);
-
+        deck.shuffle();
         int playerIndex = 0;
         for (Card card : deck.getCards()) {
             warPlayers.get(playerIndex).addCardToHand(card);
@@ -55,67 +51,89 @@ public class WarGame extends Game {
         }
     }
 
-    private void playRound(Scanner scanner) {
-    ArrayList<Card> cardsOnTable = new ArrayList<>();
-    for (WarPlayer player : warPlayers) {
-        System.out.print(player.getName() + ", press enter to play your card: ");
-        scanner.nextLine(); // Wait for player input
-        Card playedCard = player.playCard();
-        cardsOnTable.add(playedCard);
-        System.out.println(player.getName() + " plays " + playedCard.toString());
-    }
-
-    // Determine round winner
-    WarCard winningCard = (WarCard) cardsOnTable.get(0);
-    int winningIndex = 0;
-
-    for (int i = 1; i < cardsOnTable.size(); i++) {
-        WarCard currentCard = (WarCard) cardsOnTable.get(i);
-        if (currentCard.getRank() > winningCard.getRank()) {
-            winningCard = currentCard;
-            winningIndex = i;
+    public void playRound(Scanner scanner) {
+        ArrayList<Card> cardsOnTable = new ArrayList<>();
+        for (WarPlayer player : warPlayers) {
+            System.out.print(player.getName() + ", press enter to play your card: ");
+            scanner.nextLine();
+            Card playedCard = player.playCard();
+            cardsOnTable.add(playedCard);
+            System.out.println(player.getName() + " plays " + playedCard.toString());
         }
+
+        determineRoundWinner(scanner, cardsOnTable);
     }
 
-    warPlayers.get(winningIndex).getHand().addCards(cardsOnTable);
-    System.out.println(warPlayers.get(winningIndex).getName() + " wins the round.");
-}
+    private void determineRoundWinner(Scanner scanner, ArrayList<Card> cardsOnTable) {
+        WarCard winningCard = (WarCard) cardsOnTable.get(0);
+        int winningIndex = 0;
+        boolean isTie = false;
 
-
-    private void warScenario(Scanner scanner, ArrayList<Card> cardsOnTable) {
-        // Each player adds three cards face down and one card face up
-        ArrayList<Card> cardsToBattle = new ArrayList<>();
-        for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < 3; j++) {
-                cardsToBattle.add(warPlayers.get(i).playCard());
+        for (int i = 1; i < cardsOnTable.size(); i++) {
+            WarCard currentCard = (WarCard) cardsOnTable.get(i);
+            if (currentCard.getRank() > winningCard.getRank()) {
+                winningCard = currentCard;
+                winningIndex = i;
+                isTie = false;
+            } else if (currentCard.getRank() == winningCard.getRank()) {
+                isTie = true;
             }
-            cardsOnTable.addAll(cardsToBattle);
-            cardsToBattle.clear();
-            cardsToBattle.add(warPlayers.get(i).playCard());
-            cardsOnTable.addAll(cardsToBattle);
         }
 
-        // Determine winner of the war
-        WarCard warCard1 = (WarCard) cardsToBattle.get(0);
-        WarCard warCard2 = (WarCard) cardsToBattle.get(1);
-
-        if (warCard1.getRank() > warCard2.getRank()) {
-            warPlayers.get(0).getHand().addCards(cardsOnTable);
-            System.out.println(warPlayers.get(0).getName() + " wins the war.");
-        } else if (warCard1.getRank() < warCard2.getRank()) {
-            warPlayers.get(1).getHand().addCards(cardsOnTable);
-            System.out.println(warPlayers.get(1).getName() + " wins the war.");
+        
+        if (isTie) {
+            System.out.println("It's a tie! Playing an extra round.");
+            playExtraRound(scanner, cardsOnTable);
         } else {
-            // Recursive war if there's another tie
-            System.out.println("Another tie! Initiating another war.");
-            warScenario(scanner, cardsOnTable);
+            warPlayers.get(winningIndex).getHand().addCards(cardsOnTable);
+            System.out.println(warPlayers.get(winningIndex).getName() + " wins the round.");
+        }
+    }
+
+    private void playExtraRound(Scanner scanner, ArrayList<Card> previousCardsOnTable) {
+        ArrayList<Card> cardsOnTable = new ArrayList<>(previousCardsOnTable);
+        System.out.println("Starting extra round...");
+
+        for (WarPlayer player : warPlayers) {
+            System.out.print(player.getName() + ", press enter to play your extra round card: ");
+            scanner.nextLine();
+            Card playedCard = player.playCard();
+            cardsOnTable.add(playedCard);
+            System.out.println(player.getName() + " plays " + playedCard.toString());
+        }
+
+        determineExtraRoundWinner(cardsOnTable);
+    }
+
+    private void determineExtraRoundWinner(ArrayList<Card> cardsOnTable) {
+        WarCard winningCard = (WarCard) cardsOnTable.get(0);
+        int winningIndex = 0;
+        boolean isTie = false;
+
+        for (int i = 1; i < cardsOnTable.size(); i++) {
+            WarCard currentCard = (WarCard) cardsOnTable.get(i);
+            if (currentCard.getRank() > winningCard.getRank()) {
+                winningCard = currentCard;
+                winningIndex = i;
+                isTie = false;
+            } else if (currentCard.getRank() == winningCard.getRank()) {
+                isTie = true;
+            }
+        }
+
+        if (isTie) {
+            System.out.println("It's a tie again! Playing another extra round.");
+            playExtraRound(new Scanner(System.in), cardsOnTable);
+        } else {
+            warPlayers.get(winningIndex % warPlayers.size()).getHand().addCards(cardsOnTable);
+            System.out.println(warPlayers.get(winningIndex % warPlayers.size()).getName() + " wins the extra round.");
         }
     }
 
     private boolean isGameOver() {
         // Game ends after numRounds or when a player has all cards
-        return warPlayers.stream().anyMatch(player -> player.getHand().getCards().isEmpty())
-                || warPlayers.stream().anyMatch(player -> player.getHand().getCards().size() > 52);
+        return warPlayers.size() <= 1
+                || warPlayers.stream().anyMatch(player -> player.getHand().getCards().size() == 0);
     }
 
     @Override
@@ -134,8 +152,8 @@ public class WarGame extends Game {
 
         System.out.println("Game over! The winner is: " + winner);
     }
+    
     public void addPlayer(WarPlayer player) {
         warPlayers.add(player);
     }
-
 }
